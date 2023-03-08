@@ -9,10 +9,6 @@ import { VerticalDistance } from './ValueObject/Muton/VerticalDistance'
 
 export type Gene = Readonly<Mutons> & GeneticOperations
 
-export const Gene = {
-    create: (...mutons: Mutons): Gene => Object.assign(mutons, { crossover, mutate })
-} as const
-
 type Mutons = [
     r: Color,
     g: Color,
@@ -25,6 +21,10 @@ type Mutons = [
     height: VerticalDistance,
     rotation: Angle,
 ]
+
+export const Gene = {
+    create: (...mutons: Mutons): Gene => Object.assign(mutons, { crossover, mutate })
+} as const
 
 function crossover(this: Gene, geneB: Gene): Gene {
     const geneA = this

@@ -9,6 +9,6 @@ export class Color extends IntervalMuton {
     }
 
     protected cloneWithValue(value: number): this {
-        return new (this.constructor as new (v: number) => this)(value)
+        return new (this.constructor as any)(value)
     }
 }

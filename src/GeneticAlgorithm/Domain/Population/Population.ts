@@ -1,7 +1,7 @@
 import { EvaluableGeneticOperations } from './GeneticOperations'
 
 export class Population<T extends EvaluableGeneticOperations> extends Array<T> {
-    public fittest(): T {
+    public fittest(): T | undefined {
         return this.sort()[0]
     }
 
@@ -13,15 +13,10 @@ export class Population<T extends EvaluableGeneticOperations> extends Array<T> {
             .sort()
             .slice(0, Math.ceil(parents.length * .50))
 
-        const immortals = topParents
-            .slice(0, Math.ceil(topParents.length * .05))
-
-        newborns.push(...immortals)
-
         while (newborns.length < parents.length) {
             // Sodom and Gomorrah
-            const parentA = topParents.random()
-            const parentB = topParents.random()
+            const parentA = topParents.random()!
+            const parentB = topParents.random()!
 
             let newborn = parentA.crossover(parentB)
 
@@ -43,7 +38,7 @@ export class Population<T extends EvaluableGeneticOperations> extends Array<T> {
         return super.sort(compareFn)
     }
 
-    public random(): T {
+    public random(): T | undefined {
         return this[Math.floor(Math.random() * this.length)]
     }
 }

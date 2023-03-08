@@ -10,14 +10,14 @@ export abstract class IntervalMuton extends Number implements Muton {
 
     public crossover(mutonB: this): this {
         const mutonA = this
-        const interpolatedValue = this.lerp(mutonB.value, mutonA.value, Math.random())
+        const interpolatedValue = this.lerp(mutonA.value, mutonB.value, Math.random())
 
         return this.cloneWithValue(interpolatedValue)
     }
 
     public mutate(): this {
         const randomValue = this.lerp(...this.minMax, Math.random())
-        const mutadedValue = this.lerp(randomValue, this.value, Math.random())
+        const mutadedValue = this.lerp(randomValue, this.value, .75)
 
         return this.cloneWithValue(mutadedValue)
     }

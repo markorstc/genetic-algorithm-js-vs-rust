@@ -9,6 +9,6 @@ export class HorizontalDistance extends IntervalMuton {
     }
 
     protected cloneWithValue(value: number): this {
-        return new (this.constructor as new (v: number, m: number) => this)(value, this.max)
+        return new (this.constructor as any)(value, this.max)
     }
 }

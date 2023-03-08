@@ -11,10 +11,10 @@ export class ImageSimilarityEvaluator implements EvalGenotypeFitness {
     public evalGenotypeFitness(genotype: Genotype): number {
         const imageData = this.renderer.renderGenotypeImage(genotype)
 
-        return this.similarityPercent(imageData)
+        return this.similarityPercentage(imageData)
     }
 
-    private similarityPercent(image: ImageData): number {
+    private similarityPercentage(image: ImageData): number {
         const targetImageData = this.targetImage.data
 
         let loss = image.data.reduce((loss, rgba, idx) => {

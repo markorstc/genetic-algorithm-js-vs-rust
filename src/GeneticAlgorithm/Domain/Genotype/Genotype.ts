@@ -33,11 +33,7 @@ export class Genotype implements GeneticOperations {
         return this.cloneWithGenes(newGenes)
     }
 
-    private cloneWithGenes(genes: ReadonlyArray<Gene>) {
-        return new (this.constructor as new (g: readonly Gene[], f: EvalGenotypeFitness, r: RenderGenotype) => this)(
-            genes,
-            this.fitnessFunction,
-            this.rendererFunction,
-        )
+    private cloneWithGenes(genes: ReadonlyArray<Gene>): this {
+        return new (this.constructor as any)(genes, this.fitnessFunction, this.rendererFunction)
     }
 }
