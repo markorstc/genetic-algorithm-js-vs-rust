@@ -25,7 +25,7 @@ export default function Cavas({ targetImage }: Props) {
                 console.log(i)
 
                 shapes = shapes.evolve()
-                shapes.fittest().render()
+                shapes.fittest()?.render()
 
                 if (--i > 0) {
                     //drawIt()

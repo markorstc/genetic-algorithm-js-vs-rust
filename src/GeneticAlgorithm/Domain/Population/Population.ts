@@ -11,7 +11,7 @@ export class Population<T extends EvaluableGeneticOperations> extends Array<T> {
 
         const topParents = <Population<T>> parents
             .sort()
-            .slice(0, Math.ceil(parents.length * .50))
+            .slice(0, Math.ceil(parents.length * .25))
 
         while (newborns.length < parents.length) {
             // Sodom and Gomorrah
@@ -20,7 +20,7 @@ export class Population<T extends EvaluableGeneticOperations> extends Array<T> {
 
             let newborn = parentA.crossover(parentB)
 
-            if (Math.random() < .25) {
+            if (Math.random() < .10) {
                 newborn = newborn.mutate()
             }
 

@@ -11,12 +11,18 @@ export class CanvasRenderer implements RenderGenotype {
     public constructor(canvas: HTMLCanvasElement | OffscreenCanvas) {
         this.canvasWidth = canvas.width
         this.canvasHeight = canvas.height
-        this.ctx = canvas.getContext('2d') as RenderingContext2D
+
+        const settings: CanvasRenderingContext2DSettings = {}
+
+        if (canvas instanceof OffscreenCanvas) {
+            settings.willReadFrequently = true
+        }
+
+        this.ctx = canvas.getContext('2d', settings) as RenderingContext2D
     }
 
-    public renderGenotype({ genes }: Genotype) {
+    public renderGenotype({ genes }: Genotype): RenderingContext2D {
         this.clear()
-
         genes.forEach(gene => this.renderGene(gene))
 
         return this.ctx
@@ -31,33 +37,27 @@ export class CanvasRenderer implements RenderGenotype {
         
         this.executeInCenter(ctx => {
             ctx.rotate(+rotation * Math.PI / 180)
-        }, x, y, width, height)
+        }, +x, +y)
+
+        let [top, left] = this.calcTopLeft(+x, +y, +width, +height)
 
         if (shape.value === ShapeKind.Rectangle) {
-            this.ctx.fillRect(+x, +y, +width, +height)
+            this.ctx.fillRect(top, left, +width, +height)
         }
 
         this.ctx.resetTransform()
     }
 
-    private executeInCenter(
-        execute: (ctx: RenderingContext2D) => void,
-        x: Number,
-        y: Number,
-        width: Number,
-        height: Number
-    ): void {
-        const [xC, yC] = this.calcCenter(+x, +y, +width, +height)
-
-        this.ctx.translate(xC, yC)
+    private executeInCenter(execute: (ctx: RenderingContext2D) => void, x: number, y: number): void {
+        this.ctx.translate(x, y)
         execute(this.ctx)
-        this.ctx.translate(-xC, -yC)
+        this.ctx.translate(-x, -y)
     }
 
-    private calcCenter(x: number, y: number, width: number, height: number): [x: number, y: number] {
+    private calcTopLeft(x: number, y: number, width: number, height: number): [x: number, y: number] {
         return [
-            x + width / 2,
-            y + height / 2,
+            y - height / 2,
+            x - width / 2,
         ]
     }
 
