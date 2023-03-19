@@ -11,7 +11,11 @@ export class Population<T extends EvaluableGeneticOperations> extends Array<T> {
 
         const topParents = <Population<T>> parents
             .sort()
-            .slice(0, Math.ceil(parents.length * .25))
+            .slice(0, Math.ceil(parents.length * .40))
+
+        const immortals = topParents.slice(0, Math.ceil(parents.length * .05))
+
+        newborns.push(...immortals)
 
         while (newborns.length < parents.length) {
             // Sodom and Gomorrah

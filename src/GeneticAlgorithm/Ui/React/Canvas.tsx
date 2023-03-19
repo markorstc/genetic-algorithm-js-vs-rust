@@ -1,7 +1,9 @@
-import { usePopulation, useImageData } from './GeneticAlgorithm'
+import { usePopulation, useImageData, useWebWorkers } from './GeneticAlgorithm'
 import { RefObject, useRef } from 'react'
+import { CanvasRenderer } from '../../Infrastructure/Genotype/CanvasRenderer'
 
 export default function Cavas({ targetImage }: Props) {
+    const workers = useWebWorkers()
     const canvas = useRef<HTMLCanvasElement>(null)
 
     const onClick = () => {
@@ -9,27 +11,36 @@ export default function Cavas({ targetImage }: Props) {
             return
         }
 
-        useImageData(targetImage.current).then(imageData => {
+        useImageData(targetImage.current).then(async (imageData) => {
             if (!canvas.current) {
                 return
             }
 
-            canvas.current.width = imageData.width
-            canvas.current.height = imageData.height
+            const targetImage = imageData
+            const { width: canvasWidth, height: canvasHeight } = targetImage
 
-            let shapes = usePopulation({ numberOfShapes: 20, targetImage: imageData, canvas: canvas.current })
+            canvas.current.width = canvasWidth
+            canvas.current.height = canvasHeight
 
-            let i = 50
+            await Promise.all([
+                workers.population.init({ numberOfShapes: 30, targetImage, canvasWidth, canvasHeight }),
+                workers.canvas.init(canvas.current.transferControlToOffscreen()),
+            ])
 
-            function drawIt() {
+            let i = 300
+
+            async function drawIt() {
                 console.log(i)
 
-                shapes = shapes.evolve()
-                shapes.fittest()?.render()
+                try {
+                    const bestGenotype = await workers.population.evolveAndFindFittest()
+                    workers.canvas.renderGenotype(bestGenotype)
+                } catch (e) {
+                    console.error(e)
+                }
 
                 if (--i > 0) {
-                    //drawIt()
-                    requestAnimationFrame(drawIt)
+                    drawIt()
                 }
             }
 

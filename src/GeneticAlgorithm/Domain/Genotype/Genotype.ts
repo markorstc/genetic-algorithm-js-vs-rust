@@ -1,7 +1,6 @@
 import { Gene } from '../Gene/Gene'
 import { GeneticOperations } from '../Population/GeneticOperations'
 import { EvalGenotypeFitness } from './EvalGenotypeFitness'
-import { RenderGenotype } from './RenderGenotype'
 
 export class Genotype implements GeneticOperations {
     private fitnessCached?: number
@@ -9,15 +8,10 @@ export class Genotype implements GeneticOperations {
     public constructor(
         public readonly genes: ReadonlyArray<Gene>,
         private readonly fitnessFunction: EvalGenotypeFitness,
-        private readonly rendererFunction: RenderGenotype,
     ) {}
 
     public get fitness(): number {
         return this.fitnessCached ??= this.fitnessFunction.evalGenotypeFitness(this)
-    }
-
-    public render(): void {
-        this.rendererFunction.renderGenotype(this)
     }
 
     public crossover({ genes: genesB }: this): this {
@@ -34,6 +28,6 @@ export class Genotype implements GeneticOperations {
     }
 
     private cloneWithGenes(genes: ReadonlyArray<Gene>): this {
-        return new (this.constructor as any)(genes, this.fitnessFunction, this.rendererFunction)
+        return new (this.constructor as any)(genes, this.fitnessFunction)
     }
 }

@@ -22,6 +22,10 @@ export abstract class IntervalMuton extends Number implements Muton {
         return this.cloneWithValue(mutadedValue)
     }
 
+    public toStream(): number {
+        return this.value
+    }
+
     protected abstract cloneWithValue(value: number): this
 
     protected get min(): number {

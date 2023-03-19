@@ -1,24 +1,18 @@
-import { Gene } from '../../Domain/Gene/Gene'
+import { TransferableGene as GeneDTO } from '../../Application/TransferableObject/DTO/TransferableGene'
+import { TransferableGenotype as GenotypeDTO } from '../../Application/TransferableObject/DTO/TransferableGenotype'
+import { Gene as GeneEntity } from '../../Domain/Gene/Gene'
 import { ShapeKind } from '../../Domain/Gene/ValueObject/Muton/Shape'
-import { Genotype } from '../../Domain/Genotype/Genotype'
-import { RenderGenotype } from '../../Domain/Genotype/RenderGenotype'
+import { Genotype as GenotypeEntity } from '../../Domain/Genotype/Genotype'
 
-export class CanvasRenderer implements RenderGenotype {
+export class CanvasRenderer {
     private readonly canvasWidth: number
     private readonly canvasHeight: number
     private readonly ctx: RenderingContext2D
 
-    public constructor(canvas: HTMLCanvasElement | OffscreenCanvas) {
+    public constructor(canvas: HTMLCanvasElement | OffscreenCanvas, willReadFrequently = false) {
         this.canvasWidth = canvas.width
         this.canvasHeight = canvas.height
-
-        const settings: CanvasRenderingContext2DSettings = {}
-
-        if (canvas instanceof OffscreenCanvas) {
-            settings.willReadFrequently = true
-        }
-
-        this.ctx = canvas.getContext('2d', settings) as RenderingContext2D
+        this.ctx = canvas.getContext('2d', { willReadFrequently }) as RenderingContext2D
     }
 
     public renderGenotype({ genes }: Genotype): RenderingContext2D {
@@ -33,7 +27,7 @@ export class CanvasRenderer implements RenderGenotype {
     }
 
     private renderGene([ r, g, b, a, shape, x, y, width, height, rotation ]: Gene): void {
-        this.ctx.fillStyle = `rgb(${r}, ${g}, ${b}, ${a})`
+        this.ctx.fillStyle = `rgb(${r}, ${g}, ${b}, ${a}%)`
         
         this.executeInCenter(ctx => {
             ctx.rotate(+rotation * Math.PI / 180)
@@ -41,7 +35,7 @@ export class CanvasRenderer implements RenderGenotype {
 
         let [top, left] = this.calcTopLeft(+x, +y, +width, +height)
 
-        if (shape.value === ShapeKind.Rectangle) {
+        if (+shape === ShapeKind.Rectangle) {
             this.ctx.fillRect(top, left, +width, +height)
         }
 
@@ -69,3 +63,5 @@ export class CanvasRenderer implements RenderGenotype {
 }
 
 type RenderingContext2D = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D
+type Genotype = GenotypeEntity | GenotypeDTO
+type Gene = GeneEntity | GeneDTO

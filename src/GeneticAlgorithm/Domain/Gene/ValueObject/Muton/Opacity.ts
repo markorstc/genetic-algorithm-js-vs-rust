@@ -5,7 +5,7 @@ export class Opacity extends IntervalMuton {
     private readonly _: void
 
     public constructor(value: number) {
-        super(value, [0, 1])
+        super(value, [0, 100])
     }
 
     protected cloneWithValue(value: number): this {

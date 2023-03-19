@@ -9,7 +9,7 @@ import { VerticalDistance } from './ValueObject/Muton/VerticalDistance'
 
 export type Gene = Readonly<Mutons> & GeneticOperations
 
-type Mutons = [
+export type Mutons = [
     r: Color,
     g: Color,
     b: Color,
@@ -34,7 +34,7 @@ function crossover(this: Gene, geneB: Gene): Gene {
 }
 
 function mutate(this: Gene): Gene {
-    const newMutons = this.map(muton => muton.mutate())
+    const newMutons = this.map(muton => Math.random() < .25 ? muton.mutate() : muton)
 
     return Gene.create(...newMutons as Mutons)
 }
