@@ -1,6 +1,5 @@
-import { usePopulation, useImageData, useWebWorkers } from './GeneticAlgorithm'
+import { useImageData, useWebWorkers } from './GeneticAlgorithm'
 import { RefObject, useRef } from 'react'
-import { CanvasRenderer } from '../../Infrastructure/Genotype/CanvasRenderer'
 
 export default function Cavas({ targetImage }: Props) {
     const workers = useWebWorkers()
