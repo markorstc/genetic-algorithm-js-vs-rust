@@ -19,10 +19,3 @@ export function useWebWorkers(): WebWorkers {
     return useRef(new WebWorkers()).current
 }
 
-export type Config = {
-    numberOfShapes: number
-    targetImage: ImageData
-    canvasWidth: number
-    canvasHeight: number
-    populationSize?: number
-}
