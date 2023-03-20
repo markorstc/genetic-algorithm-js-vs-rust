@@ -1,4 +1,6 @@
 import { Config } from './Command/createPopulation'
+import CanvasWorkerUrl from '../Infrastructure/WebWorker/CanvasWorker?url'
+import PopulationWorkerUrl from '../Infrastructure/WebWorker/PopulationWorker?url'
 import { TransferableGenotype } from './TransferableObject/DTO/TransferableGenotype'
 
 export class WebWorkers {
@@ -6,17 +8,15 @@ export class WebWorkers {
     private canvasWorker?: CanvasWorker
 
     public get population(): PopulationWorker {
-        return this.populationWorker ??= this.populationWorkerFacade(new Worker(
-            new URL('../Infrastructure/WebWorker/PopulationWorker', import.meta.url),
-            { type: 'module', name: 'PopulationWorker' },
-        ))
+        return this.populationWorker ??= this.populationWorkerFacade(
+            new Worker(PopulationWorkerUrl, { type: 'module', name: 'PopulationWorker' })
+        )
     }
 
     public get canvas(): CanvasWorker {
-        return this.canvasWorker ??= this.canvasWorkerFacade(new Worker(
-            new URL('../Infrastructure/WebWorker/CanvasWorker', import.meta.url),
-            { type: 'module', name: 'CanvasWorker' },
-        ))
+        return this.canvasWorker ??= this.canvasWorkerFacade(
+            new Worker(CanvasWorkerUrl, { type: 'module', name: 'CanvasWorker' })
+        )
     }
 
     private populationWorkerFacade(worker: Worker): PopulationWorker {
