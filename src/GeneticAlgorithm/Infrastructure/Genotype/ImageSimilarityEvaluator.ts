@@ -1,6 +1,6 @@
-import { EvalGenotypeFitness } from '../../Domain/Genotype/EvalGenotypeFitness';
-import { Genotype } from '../../Domain/Genotype/Genotype';
-import { CanvasRenderer } from './CanvasRenderer';
+import { EvalGenotypeFitness } from '../../Domain/Genotype/EvalGenotypeFitness'
+import { Genotype } from '../../Domain/Genotype/Genotype'
+import { CanvasRenderer } from './CanvasRenderer'
 
 export class ImageSimilarityEvaluator implements EvalGenotypeFitness {
     public constructor(

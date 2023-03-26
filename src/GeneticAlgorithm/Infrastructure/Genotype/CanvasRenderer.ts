@@ -33,7 +33,7 @@ export class CanvasRenderer {
             ctx.rotate(+rotation * Math.PI / 180)
         }, +x, +y)
 
-        let [top, left] = this.calcTopLeft(+x, +y, +width, +height)
+        const [top, left] = this.calcTopLeft(+x, +y, +width, +height)
 
         if (+shape === ShapeKind.Rectangle) {
             this.ctx.fillRect(top, left, +width, +height)
