@@ -1,16 +1,16 @@
-import { createPopulation } from '../../Application/Command/createPopulation'
 import { TransferableGenotype } from '../../Application/TransferableObject/DTO/TransferableGenotype'
+import { createPopulation } from '../../Application/UseCase/createPopulation'
 import { Genotype } from '../../Domain/Genotype/Genotype'
 import { Population } from '../../Domain/Population/Population'
 import { EvolvePopulationMessage, InitPopulationMessage, WorkKind } from './PopulationWorkerFacade'
 
 let population: Population<Genotype> | undefined
 
-self.onmessage = function ({ data }: MessageEvent<Message>) {
+self.onmessage = async ({ data }: MessageEvent<Message>) => {
     switch (data.action) {
         case WorkKind.InitPopulation:
             population = createPopulation(data.config)
-            self.postMessage(undefined)
+            self.postMessage(true)
 
             break
         case WorkKind.EvolveAndFindFittest:
@@ -18,7 +18,7 @@ self.onmessage = function ({ data }: MessageEvent<Message>) {
                 throw new Error('Population must be initialized first.')
             }
 
-            population = population.evolve()
+            population = await population.evolve()
             const bestGenotype = population.fittest()
 
             if (!bestGenotype) {

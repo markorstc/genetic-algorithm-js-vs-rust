@@ -7,12 +7,10 @@ import { Shape, ShapeKind } from '../../Domain/Gene/ValueObject/Muton/Shape'
 import { VerticalDistance } from '../../Domain/Gene/ValueObject/Muton/VerticalDistance'
 import { Genotype } from '../../Domain/Genotype/Genotype'
 import { Population } from '../../Domain/Population/Population'
-import { CanvasRenderer } from '../../Infrastructure/Genotype/CanvasRenderer'
-import { ImageSimilarityEvaluator } from '../../Infrastructure/Genotype/ImageSimilarityEvaluator'
+import { FitnessWorkerPool } from '../../Infrastructure/WebWorker/FitnessWorkerPool'
 
 export function createPopulation(config: Config): Population<Genotype> {
-    const renderer = new CanvasRenderer(new OffscreenCanvas(config.canvasWidth, config.canvasHeight), true)
-    const fitnessFunction = new ImageSimilarityEvaluator(config.targetImage, renderer)
+    const fitnessFunction = new FitnessWorkerPool(config, navigator.hardwareConcurrency)
     const length = config.populationSize ?? 100
 
     return <Population<Genotype>> Population

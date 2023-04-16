@@ -1,6 +1,7 @@
 import { Muton } from '../Muton'
 
 export abstract class IntervalMuton extends Number implements Muton {
+
     public constructor(
         public readonly value: number,
         private readonly minMax: Readonly<[number, number]>,

@@ -1,8 +1,9 @@
-import { EvalGenotypeFitness } from '../../Domain/Genotype/EvalGenotypeFitness'
-import { Genotype } from '../../Domain/Genotype/Genotype'
+import { TransferableGenotype as GenotypeDTO } from '../../Application/TransferableObject/DTO/TransferableGenotype'
+import { Genotype as GenotypeEntity } from '../../Domain/Genotype/Genotype'
 import { CanvasRenderer } from './CanvasRenderer'
 
-export class ImageSimilarityEvaluator implements EvalGenotypeFitness {
+export class ImageSimilarityEvaluator {
+
     public constructor(
         private readonly targetImage: ImageData,
         private readonly renderer: CanvasRenderer,
@@ -29,3 +30,5 @@ export class ImageSimilarityEvaluator implements EvalGenotypeFitness {
         return (1 - loss) * 100
     }
 }
+
+type Genotype = GenotypeEntity | GenotypeDTO

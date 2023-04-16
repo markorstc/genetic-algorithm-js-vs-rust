@@ -3,15 +3,16 @@ import { GeneticOperations } from '../Population/GeneticOperations'
 import { EvalGenotypeFitness } from './EvalGenotypeFitness'
 
 export class Genotype implements GeneticOperations {
-    private fitnessCached?: number
+    public fitness?: number
 
     public constructor(
         public readonly genes: ReadonlyArray<Gene>,
         private readonly fitnessFunction: EvalGenotypeFitness,
     ) {}
 
-    public get fitness(): number {
-        return this.fitnessCached ??= this.fitnessFunction.evalGenotypeFitness(this)
+    public async resolveFitness(): Promise<number> {
+        return this.fitnessFunction.evalGenotypeFitness(this)
+            .then(fitness => this.fitness = fitness)
     }
 
     public crossover({ genes: genesB }: this): this {

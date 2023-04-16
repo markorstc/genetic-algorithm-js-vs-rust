@@ -1,50 +1,41 @@
-import { Config } from '../../Application/Command/createPopulation'
+import { PromiseExecutor } from '../../Application/Promise/PromiseExecutor'
 import { TransferableGenotype } from '../../Application/TransferableObject/DTO/TransferableGenotype'
+import { Config } from '../../Application/UseCase/createPopulation'
 import populationWorkerUrl from './PopulationWorker?url'
 
 export class PopulationWorkerFacade {
     private readonly worker: Worker
-    private readonly workConsumers: WorkConsumer[] = []
+    private readonly promisedWorks: PromiseExecutor[] = []
 
     public constructor() {
         this.worker = new Worker(populationWorkerUrl, { type: 'module', name: 'PopulationWorker' })
 
         this.worker.onmessage = ({ data }) => {
-            const [resolve, _, defferedWork] = this.workConsumers.shift()!
+            const [resolve, _] = this.promisedWorks.shift()!
             resolve(data)
-            defferedWork?.startWorking()
         }
 
         this.worker.onerror = ({ message }) => {
-            const [_, reject, defferedWork] = this.workConsumers.shift()!
+            const [_, reject] = this.promisedWorks.shift()!
             reject(message)
-            defferedWork?.startWorking()
         }
     }
 
     public init(config: Config): Promise<true> {
-        return this.promiseWork(() => {
-            const message: InitPopulationMessage = { action: WorkKind.InitPopulation, config }
-            this.worker.postMessage(message)
+        const message: InitPopulationMessage = { action: WorkKind.InitPopulation, config }
+
+        return new Promise<any>((resolve, reject) => {
+            this.promisedWorks.push([resolve, reject])
+            this.worker.postMessage(message, [config.targetImage.data.buffer])
         })
     }
 
     public evolveAndFindFittest(): Promise<TransferableGenotype> {
-        return this.promiseWork(() => {
-            const message: EvolvePopulationMessage = { action: WorkKind.EvolveAndFindFittest }
-            this.worker.postMessage(message)
-        })
-    }
+        const message: EvolvePopulationMessage = { action: WorkKind.EvolveAndFindFittest }
 
-    private promiseWork<T>(startWorking: () => void): Promise<T> {
         return new Promise<any>((resolve, reject) => {
-            const numberOfPromises = this.workConsumers.push([resolve, reject])
-
-            if (numberOfPromises === 1) {
-                startWorking()
-            } else {
-                this.workConsumers[numberOfPromises - 1].push({ startWorking })
-            }
+            this.promisedWorks.push([resolve, reject])
+            this.worker.postMessage(message)
         })
     }
 }
@@ -60,9 +51,3 @@ export type InitPopulationMessage = {
 export type EvolvePopulationMessage = {
     action: WorkKind.EvolveAndFindFittest
 }
-type WorkConsumer = [
-    resolve: Parameters<PromiseExecutor>[0],
-    reject: Parameters<PromiseExecutor>[1],
-    defferedWork?: { startWorking: () => void },
-]
-type PromiseExecutor = ConstructorParameters<PromiseConstructorLike>[0]

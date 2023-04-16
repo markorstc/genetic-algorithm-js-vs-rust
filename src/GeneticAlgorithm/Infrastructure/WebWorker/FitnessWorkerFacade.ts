@@ -1,36 +1,40 @@
 import { PromiseExecutor } from '../../Application/Promise/PromiseExecutor'
 import { TransferableGenotype } from '../../Application/TransferableObject/DTO/TransferableGenotype'
-import canvasWorkerUrl from './CanvasWorker?url'
+import { Config } from '../../Application/UseCase/createPopulation'
+import fitnessWorkerUrl from './FitnessWorker?url'
 
-export class CanvasWorkerFacade {
+export class FitnessWorkerFacade {
+    public onfinish?: (worker: this) => void
     private readonly worker: Worker
     private readonly promisedWorks: PromiseExecutor[] = []
 
     public constructor() {
-        this.worker = new Worker(canvasWorkerUrl, { type: 'module', name: 'CanvasWorker' })
+        this.worker = new Worker(fitnessWorkerUrl, { type: 'module', name: 'PopulationWorker' })
 
         this.worker.onmessage = ({ data }) => {
             const [resolve, _] = this.promisedWorks.shift()!
             resolve(data)
+            this.onfinish && this.onfinish(this)
         }
 
         this.worker.onerror = ({ message }) => {
             const [_, reject] = this.promisedWorks.shift()!
             reject(message)
+            this.onfinish && this.onfinish(this)
         }
     }
 
-    public init(canvas: OffscreenCanvas): Promise<true> {
-        const message: InitCanvasMessage = { action: WorkKind.InitCanvas, canvas }
+    public init(config: Config): Promise<true> {
+        const message: InitMessage = { action: WorkKind.Init, config }
 
         return new Promise<any>((resolve, reject) => {
             this.promisedWorks.push([resolve, reject])
-            this.worker.postMessage(message, [canvas])
+            this.worker.postMessage(message)
         })
     }
 
-    public renderGenotype(genotype: TransferableGenotype): Promise<true> {
-        const message: RenderGenotypeMessage = { action: WorkKind.RenderGenotype, genotype }
+    public evalGenotypeFitness(genotype: TransferableGenotype): Promise<number> {
+        const message: EvalFitnessMessage = { action: WorkKind.EvalGenotypeFitness, genotype }
 
         return new Promise<any>((resolve, reject) => {
             this.promisedWorks.push([resolve, reject])
@@ -40,14 +44,14 @@ export class CanvasWorkerFacade {
 }
 
 export enum WorkKind {
-    InitCanvas,
-    RenderGenotype,
+    Init,
+    EvalGenotypeFitness,
 }
-export type InitCanvasMessage = {
-    action: WorkKind.InitCanvas
-    canvas: OffscreenCanvas
+export type InitMessage = {
+    action: WorkKind.Init
+    config: Config
 }
-export type RenderGenotypeMessage = {
-    action: WorkKind.RenderGenotype,
-    genotype: TransferableGenotype,
+export type EvalFitnessMessage = {
+    action: WorkKind.EvalGenotypeFitness
+    genotype: TransferableGenotype
 }

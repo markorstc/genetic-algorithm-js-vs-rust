@@ -1,6 +1,7 @@
 import { Muton } from '../Muton'
 
 export class Shape implements Muton {
+
     public constructor(public readonly value: ShapeKind) {}
 
     public crossover(mutonB: this): this {

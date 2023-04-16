@@ -1,5 +1,5 @@
-import { Genotype } from './Genotype';
+import { Genotype } from './Genotype'
 
 export interface EvalGenotypeFitness {
-    evalGenotypeFitness(g: Genotype): number
+    evalGenotypeFitness(g: Genotype): Promise<number>
 }
