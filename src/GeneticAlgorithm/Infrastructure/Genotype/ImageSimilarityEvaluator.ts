@@ -16,14 +16,19 @@ export class ImageSimilarityEvaluator {
     }
 
     private similarityPercentage(image: ImageData): number {
-        const targetImageData = this.targetImage.data
+        let loss = 0
 
-        let loss = image.data.reduce((loss, rgba, idx) => {
-            if ((idx + 1) % 4 === 0) { // every 4th element is alpha, but we compare only colors
-                return loss
-            }
-            return loss + Math.abs(rgba / 255 - targetImageData[idx] / 255)
-        }, 0)
+        const imgData = image.data
+        const targetImgData = this.targetImage.data
+
+        for (let i = 0, l = imgData.length; i < l; i += 4) {
+            const r = Math.abs(imgData[i] - targetImgData[i]) / 255
+            const g = Math.abs(imgData[i+1] - targetImgData[i+1]) / 255
+            const b = Math.abs(imgData[i+2] - targetImgData[i+2]) / 255
+            // skip alpha [i+3]
+
+            loss += r + g + b
+        }
 
         loss /= (image.width * image.height * 3)
 
