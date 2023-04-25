@@ -1,58 +1,50 @@
-import { useImageData, useWebWorkers } from './GeneticAlgorithm'
-import { RefObject, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import { WebWorkers } from '../../Application/WebWorkers'
+import css from './Canvas.module.css'
 
-export default function Cavas({ targetImage }: Props) {
-    const workers = useWebWorkers()
+export default function Cavas({ targetImage, numberOfSquares, doEvolve }: Props) {
+    const workers = useRef(new WebWorkers()).current
     const canvas = useRef<HTMLCanvasElement>(null)
 
-    const onClick = () => {
-        if (!targetImage.current) {
+    useEffect(() => {
+        if (!doEvolve) {
+            workers.terminate()
             return
         }
 
-        useImageData(targetImage.current).then(async (imageData) => {
-            if (!canvas.current) {
-                return
+        if (!targetImage) {
+            return
+        }
+
+        const { width: canvasWidth, height: canvasHeight } = targetImage
+
+        canvas.current!.width = canvasWidth
+        canvas.current!.height = canvasHeight
+
+        workers.canvas.init(canvas.current!.transferControlToOffscreen())
+        workers.population.init({ numberOfShapes: numberOfSquares, targetImage, canvasWidth, canvasHeight });
+
+        (async function draw() {
+            try {
+                const [bestGenotype, _] = await workers.population.evolveAndFindFittest()
+                workers.canvas.renderGenotype(bestGenotype)
+            } catch (e) {
+                console.error(e)
             }
 
-            const targetImage = imageData
-            const { width: canvasWidth, height: canvasHeight } = targetImage
-
-            canvas.current.width = canvasWidth
-            canvas.current.height = canvasHeight
-
-            await Promise.all([
-                workers.population.init({ numberOfShapes: 30, targetImage, canvasWidth, canvasHeight }),
-                workers.canvas.init(canvas.current.transferControlToOffscreen()),
-            ])
-
-            let i = 300
-
-            async function drawIt() {
-                console.log(i)
-
-                try {
-                    const bestGenotype = await workers.population.evolveAndFindFittest()
-                    workers.canvas.renderGenotype(bestGenotype)
-                } catch (e) {
-                    console.error(e)
-                }
-
-                if (--i > 0) {
-                    drawIt()
-                }
-            }
-
-            drawIt()
-        })
-    }
+            draw()
+        })()
+    }, [targetImage, numberOfSquares, doEvolve])
 
     return (
-        <>
-            <button onClick={onClick}>Evolve</button>
+        <output className={css.output}>
             <canvas ref={canvas}></canvas>
-        </>
+        </output>
     )
 }
 
-type Props = { targetImage: RefObject<HTMLImageElement> }
+type Props = {
+    targetImage: ImageData | null
+    numberOfSquares: number
+    doEvolve: boolean
+}

@@ -19,14 +19,14 @@ self.onmessage = async ({ data }: MessageEvent<Message>) => {
             }
 
             population = await population.evolve()
-            const bestGenotype = population.fittest()
+            const bestGenotype = await population.fittest()
 
             if (!bestGenotype) {
                 throw new Error('Population is empty.');
             }
 
             const genotypeDTO = TransferableGenotype.create(bestGenotype)
-            self.postMessage(genotypeDTO, genotypeDTO.genes.map(({ buffer }) => buffer))
+            self.postMessage([genotypeDTO, bestGenotype.fitness], genotypeDTO.genes.map(({ buffer }) => buffer))
 
             break
         default:

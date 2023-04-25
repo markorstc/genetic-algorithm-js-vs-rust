@@ -1,0 +1,19 @@
+.imageInput {
+    width: 500px;
+    height: 500px;
+    border: 2px dashed #ade1e6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    grid-area: input;
+}
+
+.imageInput__input {
+    /* TODO style buttons */
+}
+
+.imageInput__img {
+    max-width: 500px;
+    max-height: 500px;
+}

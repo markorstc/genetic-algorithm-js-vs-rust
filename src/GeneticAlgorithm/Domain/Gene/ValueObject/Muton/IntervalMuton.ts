@@ -18,7 +18,7 @@ export abstract class IntervalMuton extends Number implements Muton {
 
     public mutate(): this {
         const randomValue = this.lerp(...this.minMax, Math.random())
-        const mutadedValue = this.lerp(randomValue, this.value, .75)
+        const mutadedValue = this.lerp(randomValue, this.value, Math.random())
 
         return this.cloneWithValue(mutadedValue)
     }

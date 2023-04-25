@@ -24,7 +24,7 @@ export class FitnessWorkerFacade {
         }
     }
 
-    public init(config: Config): Promise<true> {
+    public async init(config: Config): Promise<true> {
         const message: InitMessage = { action: WorkKind.Init, config }
 
         return new Promise<any>((resolve, reject) => {
@@ -33,7 +33,7 @@ export class FitnessWorkerFacade {
         })
     }
 
-    public evalGenotypeFitness(genotype: TransferableGenotype): Promise<number> {
+    public async evalGenotypeFitness(genotype: TransferableGenotype): Promise<number> {
         const message: EvalFitnessMessage = { action: WorkKind.EvalGenotypeFitness, genotype }
 
         return new Promise<any>((resolve, reject) => {

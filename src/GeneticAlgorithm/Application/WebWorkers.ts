@@ -12,4 +12,10 @@ export class WebWorkers {
     public get canvas(): CanvasWorkerFacade {
         return this.canvasWorker ??= new CanvasWorkerFacade()
     }
+
+    public terminate(): void {
+        if (this.populationWorker) {
+            this.populationWorker.terminate()
+        }
+    }
 }

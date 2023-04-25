@@ -17,7 +17,9 @@ export class CanvasRenderer {
 
     public renderGenotype({ genes }: Genotype): RenderingContext2D {
         this.clear()
-        genes.forEach(gene => this.renderGene(gene))
+
+        const genesByZIndex = [...genes].sort((geneA, geneB) => +geneB[7] - +geneA[7])
+        genesByZIndex.forEach(gene => this.renderGene(gene))
 
         return this.ctx
     }
@@ -26,7 +28,7 @@ export class CanvasRenderer {
         return this.renderGenotype(genotype).getImageData(0, 0, this.canvasWidth, this.canvasHeight)
     }
 
-    private renderGene([ r, g, b, a, shape, x, y, width, height, rotation ]: Gene): void {
+    private renderGene([r, g, b, a, shape, x, y, _, width, height, rotation]: Gene): void {
         this.ctx.fillStyle = `rgb(${r}, ${g}, ${b}, ${a}%)`
         
         this.executeInCenter(ctx => {

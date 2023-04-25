@@ -20,7 +20,7 @@ export class CanvasWorkerFacade {
         }
     }
 
-    public init(canvas: OffscreenCanvas): Promise<true> {
+    public async init(canvas: OffscreenCanvas): Promise<true> {
         const message: InitCanvasMessage = { action: WorkKind.InitCanvas, canvas }
 
         return new Promise<any>((resolve, reject) => {
@@ -29,7 +29,7 @@ export class CanvasWorkerFacade {
         })
     }
 
-    public renderGenotype(genotype: TransferableGenotype): Promise<true> {
+    public async renderGenotype(genotype: TransferableGenotype): Promise<true> {
         const message: RenderGenotypeMessage = { action: WorkKind.RenderGenotype, genotype }
 
         return new Promise<any>((resolve, reject) => {

@@ -6,6 +6,7 @@ import { HorizontalDistance } from './ValueObject/Muton/HorizontalDistance'
 import { Opacity } from './ValueObject/Muton/Opacity'
 import { Shape } from './ValueObject/Muton/Shape'
 import { VerticalDistance } from './ValueObject/Muton/VerticalDistance'
+import { ZIndex } from './ValueObject/Muton/ZIndex'
 
 export type Gene = Readonly<Mutons> & GeneticOperations
 
@@ -17,6 +18,7 @@ export type Mutons = [
     shape: Shape,
     x: HorizontalDistance,
     y: VerticalDistance,
+    z: ZIndex,
     width: HorizontalDistance,
     height: VerticalDistance,
     rotation: Angle,
