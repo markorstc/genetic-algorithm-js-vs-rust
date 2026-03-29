@@ -1,12 +1,22 @@
 import { PopulationWorkerFacade } from '../Infrastructure/WebWorker/PopulationWorkerFacade'
+import { RustPopulationWorkerFacade } from '../Infrastructure/WebWorker/RustPopulationWorkerFacade'
 import { CanvasWorkerFacade } from '../Infrastructure/WebWorker/CanvasWorkerFacade'
 
+export type EngineMode = 'js' | 'rust'
+
 export class WebWorkers {
-    private populationWorker?: PopulationWorkerFacade
+    private populationWorker?: PopulationWorkerFacade | RustPopulationWorkerFacade
     private canvasWorker?: CanvasWorkerFacade
 
-    public get population(): PopulationWorkerFacade {
-        return this.populationWorker ??= new PopulationWorkerFacade()
+    public constructor(private readonly mode: EngineMode = 'js') {}
+
+    public get population(): PopulationWorkerFacade | RustPopulationWorkerFacade {
+        if (!this.populationWorker) {
+            this.populationWorker = this.mode === 'rust'
+                ? new RustPopulationWorkerFacade()
+                : new PopulationWorkerFacade()
+        }
+        return this.populationWorker
     }
 
     public get canvas(): CanvasWorkerFacade {
@@ -19,3 +29,4 @@ export class WebWorkers {
         }
     }
 }
+

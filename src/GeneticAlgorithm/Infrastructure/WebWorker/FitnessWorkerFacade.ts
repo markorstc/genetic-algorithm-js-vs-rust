@@ -9,7 +9,7 @@ export class FitnessWorkerFacade {
     private readonly promisedWorks: PromiseExecutor[] = []
 
     public constructor() {
-        this.worker = new Worker(fitnessWorkerUrl, { type: 'module', name: 'PopulationWorker' })
+        this.worker = new Worker(fitnessWorkerUrl, { type: 'module', name: 'FitnessWorker' })
 
         this.worker.onmessage = ({ data }) => {
             const [resolve, _] = this.promisedWorks.shift()!
