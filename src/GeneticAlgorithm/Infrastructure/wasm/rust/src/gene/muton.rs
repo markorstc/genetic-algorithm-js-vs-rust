@@ -99,7 +99,7 @@ mod macros {
                 fn try_from(value: $num_type) -> Result<Self, Self::Error> {
                     let muton = Self(value);
 
-                    if <Self as super::IntervalMuton>::is_valid(&muton, value) {
+                    if <Self as super::IntervalMuton::is_valid(&muton, value) {
                         Ok(muton)
                     } else {
                         Err("Out of bounds.")

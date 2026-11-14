@@ -1,5 +1,3 @@
-use console_log::init_with_level;
-use log::Level;
 use wasm_bindgen::prelude::wasm_bindgen;
 
 mod population;
@@ -7,8 +5,12 @@ mod gene;
 
 use crate::gene::muton::{Color, Opacity, Shape};
 
-init_with_level(Level::Debug).unwrap();
-log::info!("checkpoint reached, state");
+#[wasm_bindgen]
+pub fn init_panic_hook() {
+    let _ = console_log::init_with_level(log::Level::Debug);
+    console_error_panic_hook::set_once();
+    log::debug!("wasm debug logging initialized");
+}
 
 #[wasm_bindgen]
 pub fn add(a: i32, b: i32) -> i32 {
@@ -33,7 +35,7 @@ pub struct Genome {
 #[wasm_bindgen]
 impl Genome {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> Self {
+    pub fn new(cnf: Config) -> Self {
         let mut genome = Self::default();
         genome.add_gene(Gene(
             111.try_into().unwrap(),

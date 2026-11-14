@@ -1,10 +1,14 @@
 import { useState } from 'react'
+import { add, parseGenome } from '../../Infrastructure/wasm'
 import Canvas from './Canvas'
 import ImageInput from './ImageInput'
 
 export default function App() {
     const [targetImage, setTargetImage] = useState<ImageData | null>(null)
     const [isEvolving, setIsEvolving] = useState(false)
+
+    console.log(add(1, 2))
+    console.log(parseGenome())
 
     return (
         <>

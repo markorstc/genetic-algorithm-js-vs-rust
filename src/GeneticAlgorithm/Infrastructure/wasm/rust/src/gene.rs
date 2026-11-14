@@ -17,8 +17,6 @@ pub struct Gene {
     rotation: Angle,
 }
 
-pub struct Genome(Vec<Gene>);
-
 impl GeneticOperator for Gene {
     fn crossover(&self, other: &Self) -> Self {
         Self {
@@ -48,6 +46,14 @@ impl GeneticOperator for Gene {
         self.width.mutate();
         self.height.mutate();
         self.rotation.mutate();
+    }
+}
+
+pub struct Genome(Vec<Gene>);
+
+impl Genome {
+    pub fn new(cnf: Config) -> Self {
+
     }
 }
 
